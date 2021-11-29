@@ -1,0 +1,55 @@
+stages:
+  - test
+  - sonar
+  - build
+  - deploy
+
+variables:
+  CONTAINER_IMAGE: ${DOCKER_REGISTRY}/library/go-pks-demo:${CI_COMMIT_SHORT_SHA}
+
+test:
+  stage: test
+  script:
+    - ./task_run_tests.sh
+  tags:
+    - demo-pks-runner
+
+sonar:
+  stage: sonar
+  script:
+    - go test ./... -coverprofile=coverage.out
+    - go test ./... -json > report.json
+    - sonar-scanner -Dsonar.projectKey=vs-go-demo  -Dsonar.sources=.  -Dsonar.login=aedef3a917a022c9897b797b0ef886c550920486
+  tags:
+    - demo-pks-runner
+  only:
+    - master
+
+build:
+  stage: build
+  script:
+    - docker login ${DOCKER_REGISTRY} -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+    - docker build -t ${CONTAINER_IMAGE} .
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE}
+    - docker push ${CONTAINER_IMAGE}
+  tags:
+    - demo-pks-runner
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl config set-cluster k8s --server="${SERVER}"
+    - kubectl config set clusters.k8s.certificate-authority-data ${CERTIFICATE_AUTHORITY_DATA}
+    - kubectl config set-credentials gitlab --token="${USER_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+    - sed -i "s/<DOCKER_REGISTRY>/${DOCKER_REGISTRY}/g" deployment.yml
+    - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" deployment.yml
+    - kubectl apply -f deployment.yml
+  tags:
+    - demo-pks-runner
+  only:
+    - master
+  when: manual
