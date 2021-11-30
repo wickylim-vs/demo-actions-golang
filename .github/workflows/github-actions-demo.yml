@@ -1,22 +1,16 @@
 name: github-actions-demo
 on: [push]
 jobs:
-  setup-golang:
-    runs-on: [self-hosted, linux, demo]
-    steps:
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.17'
-      - run: go version
-      - run: echo "Setup GoLang Completed."
   golang-unit-tests:
     runs-on: [self-hosted, linux, demo]
     needs: setup-golang
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
       - run: go version
       - run: ./task_run_tests.sh
-      - run: echo "Running Unit Tests"
   codacy-sast:
     runs-on: [self-hosted, linux, demo]
     steps:
