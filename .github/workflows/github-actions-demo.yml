@@ -1,0 +1,36 @@
+name: github-actions-demo
+on: [push]
+jobs:
+  setup-golang:
+    runs-on: [self-hosted, linux, demo]
+    steps:
+      - run: echo "Setup GoLang"
+  golang-unit-tests:
+    runs-on: [self-hosted, linux, demo]
+    needs: setup-golang
+    steps:
+      - run: echo "Running Unit Tests"
+  codacy-sast:
+    runs-on: [self-hosted, linux, demo]
+    steps:
+      - run: echo "Run Codacy SAST"
+  deploy-sit:
+    runs-on: [self-hosted, linux, demo, docker]
+    needs: [golang-unit-tests, codacy-sast]
+    steps:
+      - run: echo "Deploy to SIT"
+  cypress-integration-test:
+    runs-on: [self-hosted, linux, demo, docker]
+    needs: deploy-sit
+    steps:
+      - run: echo "Run Cypress Integration Tests"
+  production-approval:
+    needs: cypress-integration-test
+    steps:
+      - run: echo "Production Deployment Approval"
+  deploy-prod:
+    runs-on: [self-hosted, linux, demo, kind]
+    needs: deploy-prod
+    steps:
+      - run: echo "Deploy to Production"
+
