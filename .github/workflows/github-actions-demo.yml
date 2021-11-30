@@ -31,7 +31,7 @@ jobs:
       - run: echo "Production Deployment Approval"
   deploy-prod:
     runs-on: [self-hosted, linux, demo, kind]
-    needs: deploy-prod
+    needs: production-approval
     steps:
       - run: echo "Deploy to Production"
 
