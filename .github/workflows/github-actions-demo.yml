@@ -25,6 +25,7 @@ jobs:
     steps:
       - run: echo "Run Cypress Integration Tests"
   production-approval:
+    runs-on: [self-hosted, linux, demo]
     needs: cypress-integration-test
     steps:
       - run: echo "Production Deployment Approval"
