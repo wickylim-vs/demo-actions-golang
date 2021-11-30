@@ -13,7 +13,7 @@ jobs:
           go-version: '1.17'
       - name: Run "go version"
         run: go version
-      - Run unit tests script
+      - name: Run unit tests
         run: ./task_run_tests.sh
   codacy-sast:
     name: Codacy SAST
