@@ -2,18 +2,27 @@ name: github-actions-demo
 on: [push]
 jobs:
   golang-unit-tests:
+    name: Unit tests - GoLang
     runs-on: [self-hosted, linux, demo]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Golang library
+        uses: actions/setup-go@v2
         with:
           go-version: '1.17'
-      - run: go version
-      - run: ./task_run_tests.sh
+      - name: Run "go version"
+        run: go version
+      - Run unit tests script
+        run: ./task_run_tests.sh
   codacy-sast:
+    name: Codacy SAST
     runs-on: [self-hosted, linux, demo]
     steps:
-      - run: echo "Run Codacy SAST"
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
   deploy-sit:
     runs-on: [self-hosted, linux, demo, docker]
     needs: [golang-unit-tests, codacy-sast]
