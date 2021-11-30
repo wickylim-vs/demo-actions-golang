@@ -23,6 +23,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master
+        with:
+          run-gosec: "true"
+          run-staticcheck: "true"
+          run-aligncheck: "true"
+          run-deadcode: "true"
   deploy-sit:
     runs-on: [self-hosted, linux, demo, docker]
     needs: [golang-unit-tests, codacy-sast]
