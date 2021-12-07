@@ -19,10 +19,10 @@ func init() {
 }
 
 func main() {
-  // dummy hardcoded credentials to trigger sast
-  username := "admin"
-  var password = "f62e5bcda4fae4f82370da0c6f20697b8f8447ef"
-  fmt.Println("Doing something with: ", username, password)
+	// dummy hardcoded credentials to trigger sast
+	username := "admin"
+	var password = "f62e5bcda4fae4f82370da0c6f20697b8f8447ef"
+	fmt.Println("Doing something with: ", username, password)
 
 	r := chi.NewRouter()
 
@@ -56,5 +56,5 @@ func home(w http.ResponseWriter, r *http.Request) {
 func ping(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	opsRequest.Inc()
-	fmt.Fprintf(w, "pong from %v", hostname)
+	fmt.Fprintf(w, "poong from %v", hostname)
 }
