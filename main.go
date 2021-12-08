@@ -56,5 +56,5 @@ func home(w http.ResponseWriter, r *http.Request) {
 func ping(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	opsRequest.Inc()
-	fmt.Fprintf(w, "poong from %v", hostname)
+	fmt.Fprintf(w, "pong from %v", hostname)
 }

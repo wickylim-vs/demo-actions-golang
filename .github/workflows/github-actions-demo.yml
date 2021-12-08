@@ -26,8 +26,6 @@ jobs:
         with:
           run-gosec: "true"
           run-staticcheck: "true"
-          run-aligncheck: "true"
-          run-deadcode: "true"
   deploy-sit:
     runs-on: [self-hosted, linux, demo, docker]
     needs: [golang-unit-tests, codacy-sast]
