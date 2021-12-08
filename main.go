@@ -19,6 +19,10 @@ func init() {
 }
 
 func main() {
+	// dummy hardcoded credentials to trigger sast
+	username := "admin"
+	var password = "f62e5bcda4fae4f82370da0c6f20697b8f8447ef"
+	fmt.Println("Doing something with: ", username, password)
 
 	r := chi.NewRouter()
 

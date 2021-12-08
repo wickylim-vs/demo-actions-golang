@@ -1,0 +1,50 @@
+name: github-actions-demo
+on: [push]
+jobs:
+  golang-unit-tests:
+    name: Unit tests - GoLang
+    runs-on: [self-hosted, linux, demo]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Golang library
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+      - name: Run "go version"
+        run: go version
+      - name: Run unit tests
+        run: ./task_run_tests.sh
+  codacy-sast:
+    name: Codacy SAST
+    runs-on: [self-hosted, linux, demo]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          run-gosec: "true"
+          run-staticcheck: "true"
+  deploy-sit:
+    runs-on: [self-hosted, linux, demo, docker]
+    needs: [golang-unit-tests, codacy-sast]
+    steps:
+      - run: echo "Deploy to SIT"
+  cypress-integration-test:
+    runs-on: [self-hosted, linux, demo, docker]
+    needs: deploy-sit
+    steps:
+      - run: echo "Run Cypress Integration Tests"
+  production-approval:
+    runs-on: [self-hosted, linux, demo]
+    needs: cypress-integration-test
+    steps:
+      - run: echo "Production Deployment Approval"
+  deploy-prod:
+    runs-on: [self-hosted, linux, demo, kind]
+    needs: production-approval
+    steps:
+      - run: echo "Deploy to Production"
+
